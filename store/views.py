@@ -1,7 +1,5 @@
 from . models import category,product,order,OrderItem,Cart,CartItem
-  
 from . serializers import categoryserializer,productserializer,orderserializer,OrderItemtserializer,Cartserializer,CartItemserializer
-
 from rest_framework import viewsets
 from .permissions import IsOwnerOrAdmin
 

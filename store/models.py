@@ -4,15 +4,15 @@ from django.db import models
 #category model
 class category(models.Model):
  name=models.CharField(max_length=100)
- slug=models.SlugField()
+ slug=models.SlugField(unique=True)
 
 #product model
 class product(models.Model):
-   category =models.CharField()
-   name = models.CharField()
-   slug = models.SlugField()
-   description = models.TextField()
-   price = models.IntegerField()
+   category =models.CharField(max_length=50)
+   name = models.CharField(max_length=50)
+   slug = models.SlugField(unique=True)
+   description = models.TextField(max_length=50)
+   price = models.DecimalField(max_digits=10, decimal_places=2)
    stock = models.PositiveIntegerField()
    created_at= models.DateTimeField(auto_now_add=True)
   

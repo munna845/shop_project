@@ -125,11 +125,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'store.permission.SessionAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'store.permissions.IsOwnerorAdmin',
+        'store.permissions.IsOwnerOrAdmin',
         
     ]
 }
