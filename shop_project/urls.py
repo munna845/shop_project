@@ -20,11 +20,12 @@ from store import views
 from rest_framework.routers import DefaultRouter
 router= DefaultRouter()
 
-router.register(r'categories', views.category_viewsets, basename='category')
-router.register(r'products', views.product_viewsets, basename='product')
-router.register(r'orders', views.order_viewsets, basename='order')
-router.register(r'carts',views.Cart_viewsets, basename='cart')
-router.register(r'cart-items', views.CartItem_viewsets, basename='cartitem')
+router.register(r'categories', views.CategoryViewSet, basename='category')
+router.register(r'products', views.ProductViewSet, basename='product')
+router.register(r'orders', views.OrderViewSet, basename='order')
+router.register(r'order-items', views.OrderItemViewSet, basename='orderitem')
+router.register(r'carts', views.CartViewSet, basename='cart')
+router.register(r'cart-items', views.CartItemViewSet, basename='cartitem')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -1,21 +1,22 @@
 from rest_framework import serializers
-from . models import category,product,order,OrderItem,Cart,CartItem
+from .models import Category, Product, Order, OrderItem, Cart, CartItem
+
 #category serializer
 class categoryserializer(serializers.ModelSerializer):
    class Meta:
-    model = category
+    model = Category
     fields= ['name','slug']
 
 #product serializer
 class productserializer(serializers.ModelSerializer):
    class Meta:
-    model = product
+    model = Product
     fields= ['category','name','slug','description','price','stock','created_at']
 
 #order serializer
 class orderserializer(serializers.ModelSerializer):
    class Meta:
-    model = order
+    model = Order
     fields= ['user','created_at','paid','total']
 
 #OrderItem serializer
