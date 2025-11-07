@@ -161,3 +161,12 @@ STRIPE_WEBHOOK_SECRET =os.getenv("STRIPE_WEBHOOK_SECRET")
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
+#SMTP setup
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "munnaahsan845@gmail.com"
+EMAIL_HOST_PASSWORD = "APP PASSWORD"
