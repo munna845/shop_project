@@ -19,11 +19,10 @@ import stripe
 from rest_framework.views import APIView
 from rest_framework import status
 from .pagination import large_product_pagination
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
-
-
-
-
+@method_decorator(cache_page(60*5), name='list')
 # Category ViewSet
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -38,6 +37,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 # Product ViewSet
+@method_decorator(cache_page(3*60), name='list')
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.select_related('category').all()
     serializer_class = productserializer
