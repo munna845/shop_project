@@ -66,3 +66,14 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.product.name} x {self.quantity}"
+    
+#payment
+class Payment(models.Model):
+    amount = models.IntegerField()
+    currency = models.CharField(max_length=10, default='usd')
+    stripe_payment_intent = models.CharField(max_length=200)
+    status = models.CharField(max_length=50, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.amount} - {self.status}"

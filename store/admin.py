@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Order, OrderItem, Cart, CartItem
+from .models import Category, Product, Order, OrderItem, Cart, CartItem,Payment
 
 
 # Category Admin
@@ -41,3 +41,7 @@ class CartItemAdmin(admin.ModelAdmin):
     list_display = ('id', 'cart', 'product', 'quantity')
     
 
+# payment Admin
+@admin.register(Payment)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ('amount', 'currency', 'stripe_payment_intent', 'status','created_at')

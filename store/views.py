@@ -1,4 +1,4 @@
-from .models import Category, Product, Order, OrderItem, Cart, CartItem
+from .models import Category, Product, Order, OrderItem, Cart, CartItem,Payment
 from .serializers import (
     categoryserializer,
     productserializer,
@@ -10,6 +10,17 @@ from .serializers import (
 from rest_framework import viewsets,filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .permissions import IsOwnerOrAdmin
+from rest_framework import viewsets
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+import stripe
+from rest_framework.views import APIView
+
+from rest_framework import status
+
+
 
 
 
@@ -84,3 +95,54 @@ class CartItemViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend,filters.OrderingFilter]
     filter_fields = ['cart','product']
     ordering_fields = ['quantity']
+
+stripe.api_key = settings.STRIPE_SECRET_KEY  
+
+class CreatePaymentIntent(APIView):
+    def post(self, request):
+        amount = request.data.get('amount')
+        if not amount:
+            return Response({'error': 'Amount is required'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            intent = stripe.PaymentIntent.create(
+                amount=int(amount), 
+                currency='usd',
+                payment_method_types=['card'],
+            )
+
+            payment = Payment.objects.create(
+                amount=int(amount),
+                stripe_payment_intent=intent['id'],
+                status='pending'
+            )
+
+            return Response({'clientSecret': intent.client_secret})
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# Stripe Webhook
+
+
+@csrf_exempt
+@api_view(['POST'])
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    endpoint_secret = settings.STRIPE_WEBHOOK_SECRET
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except stripe.error.SignatureVerificationError:
+        return Response({'error': 'Invalid signature'}, status=400)
+
+    if event['type'] == 'payment_intent.succeeded':
+        intent = event['data']['object']
+        payment = Payment.objects.get(stripe_payment_intent=intent['id'])
+        payment.status = 'succeeded'
+        payment.save()
+
+    return Response({'status': 'success'})

@@ -29,7 +29,7 @@ class OrderItemtserializer(serializers.ModelSerializer):
 class Cartserializer(serializers.ModelSerializer):
    class Meta:
     model = Cart
-    fields= ['session_key','created_at']
+    fields = ['id', 'user', 'created_at'] 
 
 #CartItem 
 
