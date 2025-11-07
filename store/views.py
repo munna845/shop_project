@@ -17,8 +17,8 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 import stripe
 from rest_framework.views import APIView
-
 from rest_framework import status
+from .pagination import large_product_pagination
 
 
 
@@ -29,6 +29,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = categoryserializer
     permission_classes = [IsOwnerOrAdmin]
+    pagination_class = large_product_pagination
 
     filter_backends = [filters.SearchFilter,filters.OrderingFilter]
     search_filter = ['name','slug']
@@ -41,6 +42,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.select_related('category').all()
     serializer_class = productserializer
     permission_classes = [IsOwnerOrAdmin]
+    pagination_class = large_product_pagination
 
     filter_backends = [DjangoFilterBackend,filters.SearchFilter,filters.OrderingFilter]
     filterset_fields = ['category','price','stock']
@@ -53,6 +55,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.select_related('user').prefetch_related('items__product').all()
     serializer_class = orderserializer
     permission_classes = [IsOwnerOrAdmin]
+    pagination_class = large_product_pagination
 
     filter_backends = [DjangoFilterBackend,filters.OrderingFilter]
     filterset_fiels = ['user','paid']
@@ -66,6 +69,7 @@ class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.select_related('product', 'order').all()
     serializer_class = OrderItemtserializer
     permission_classes = [IsOwnerOrAdmin]
+    pagination_class = large_product_pagination
 
     filter_backends = [DjangoFilterBackend,filters.OrderingFilter]
     filters_field = ['order','product']
@@ -80,6 +84,7 @@ class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.select_related('user').prefetch_related('items__product').all()
     serializer_class = Cartserializer
     permission_classes = [IsOwnerOrAdmin]
+    pagination_class = large_product_pagination
 
     filter_backends = [DjangoFilterBackend,filters.OrderingFilter]
     filter_fields = ['user']
@@ -91,12 +96,13 @@ class CartItemViewSet(viewsets.ModelViewSet):
     queryset = CartItem.objects.select_related('cart', 'product').all()
     serializer_class = CartItemserializer
     permission_classes = [IsOwnerOrAdmin]
+    pagination_class = large_product_pagination
 
     filter_backends = [DjangoFilterBackend,filters.OrderingFilter]
     filter_fields = ['cart','product']
     ordering_fields = ['quantity']
 
-stripe.api_key = settings.STRIPE_SECRET_KEY  
+ #Payment intent
 
 class CreatePaymentIntent(APIView):
     def post(self, request):
@@ -119,7 +125,6 @@ class CreatePaymentIntent(APIView):
             return Response({'clientSecret': intent.client_secret})
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 # Stripe Webhook
