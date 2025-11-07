@@ -140,8 +140,15 @@ REST_FRAMEWORK = {
         
     ],
     
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
-
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_THROTTLE_CLASS' : [
+      'rest_framework.throttling.UserRateThrottle',
+      'rest_framework.throttling.AnonRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES' : {
+      'user': '100/day',
+      'anon' : '10/hour'
+    },
 }
 
 #stripe 
@@ -149,7 +156,7 @@ load_dotenv()
 
 STRIPE_SECRET_KEY=os.getenv("STRIPE_SECRET_KEY")
 STRIPE_PUBLIC_KEY=os.getenv("STRIPE_PUBLIC_KEY")
-STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+STRIPE_WEBHOOK_SECRET =os.getenv("STRIPE_WEBHOOK_SECRET")
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
